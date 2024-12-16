@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wordle Helper</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@3"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    input {
+      margin: 5px;
+      padding: 5px;
+      width: 80px;
+    }
+    .toggle {
+      display: inline-block;
+      margin-left: 10px;
+    }
+    button {
+      margin-top: 10px;
+      padding: 10px 15px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      padding: 5px 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <h1>Wordle Helper</h1>
+
+    <!-- Whole Word Constraints -->
+    <div>
+      <label for="outLetters">Out Letters (exclude):</label>
+      <input id="outLetters" type="text" v-model="outLetters" placeholder="e.g., xq">
+    </div>
+    <div>
+      <label for="inLetters">In Letters (include):</label>
+      <input id="inLetters" type="text" v-model="inLetters" placeholder="e.g., t">
+    </div>
+
+    <!-- Input Fields for Letter Constraints -->
+    <div v-for="(input, index) in inputs" :key="index">
+      <label>Position {{ index + 1 }}:</label>
+      <input type="text" v-model="input.value" placeholder="Letters">
+      <div class="toggle">
+        <label>
+          <input type="radio" v-model="input.mode" value="disallow"> Disallow
+        </label>
+        <label>
+          <input type="radio" v-model="input.mode" value="require"> Require
+        </label>
+      </div>
+    </div>
+
+    <!-- Generate Button -->
+    <button @click="generateWordList">Generate Word List</button>
+
+    <!-- Results Section -->
+    <div v-if="wordList.length > 0">
+      <h3>Sorted Candidate Words</h3>
+      <ul>
+        <li v-for="word in wordList" :key="word">{{ word }}</li>
+      </ul>
+    </div>
+    <div v-else-if="searched">
+      <p>No matching words found.</p>
+    </div>
+  </div>
+
+  <script>
+    const { createApp } = Vue;
+
+    createApp({
+      data() {
+        return {
+          outLetters: "",      // Letters to exclude from the entire word
+          inLetters: "",       // Letters that must be included in the word
+          inputs: [
+            { value: "", mode: "disallow" },
+            { value: "", mode: "disallow" },
+            { value: "", mode: "disallow" },
+            { value: "", mode: "disallow" },
+            { value: "", mode: "disallow" }
+          ], // Array of inputs for 5 positions
+          wordList: [],        // Sorted list of candidate words
+          searched: false,     // Flag to track if a search was performed
+          dictionary: []       // Word list loaded from file or API
+        };
+      },
+      mounted() {
+        // Load the dictionary on app load
+        fetch('word-list-5.txt')
+          .then(response => response.text())
+          .then(data => {
+            this.dictionary = data.split(/\r?\n/).filter(word => word.length > 0).sort();
+          });
+      },
+      methods: {
+        generateWordList() {
+          const pattern = this.constructPattern();
+          if (!pattern) {
+            alert("Invalid pattern. Please check your inputs.");
+            return;
+          }
+          this.searched = true;
+          this.wordList = this.matchingWordList(pattern, this.outLetters, this.inLetters);
+        },
+        constructPattern() {
+          // Build the regex pattern from the inputs
+          return this.inputs
+            .map(input => {
+              if (input.mode === "disallow" && input.value) {
+                return `[^${input.value}]`; // Exclude letters
+              } else if (input.mode === "require" && input.value) {
+                return `[${input.value}]`; // Include letters
+              } else {
+                return "."; // Wildcard
+              }
+            })
+            .join("");
+        },
+        matchingWordList(pattern, outLetters, inLetters) {
+          const matchingWords = this.matching(pattern, outLetters, inLetters);
+          const counters = this.calculateWeights(matchingWords);
+          const scores = matchingWords.map(word => this.scoreWord(word, counters));
+          return matchingWords
+            .map((word, index) => {
+              const score = scores[index];
+              const numReps = this.numRepeats(word);
+              const repeatInfo = numReps > 0 ? `${numReps}` : "";
+              return `${score}: ${word} ${repeatInfo}`;
+            })
+            .sort((a, b) => parseFloat(b) - parseFloat(a)); // Sort in descending order
+        },
+        matching(exprString, outLetters, inLetters) {
+          const expr = new RegExp(`^${exprString}$`);
+          return this.dictionary.filter(word => {
+            if (!expr.test(word)) return false;
+            if (outLetters && [...outLetters].some(letter => word.includes(letter))) return false;
+            if (inLetters && [...inLetters].some(letter => !word.includes(letter))) return false;
+            return true;
+          });
+        },
+        calculateWeights(words) {
+          const counters = [];
+          for (let i = 0; i < 5; i++) {
+            const counter = {};
+            words.forEach(word => {
+              const char = word[i];
+              counter[char] = (counter[char] || 0) + 1;
+            });
+            counters.push(counter);
+          }
+          return counters;
+        },
+        scoreWord(word, counters) {
+          return word.split('').reduce((score, char, index) => {
+            return score + (counters[index][char] || 0);
+          }, 0);
+        },
+        numRepeats(word) {
+          const charCounts = word.split('').reduce((counter, char) => {
+            counter[char] = (counter[char] || 0) + 1;
+            return counter;
+          }, {});
+          return Object.values(charCounts).reduce((sum, count) => sum + (count > 1 ? count - 1 : 0), 0);
+        }
+      }
+    }).mount("#app");
+  </script>
+</body>
+</html>
