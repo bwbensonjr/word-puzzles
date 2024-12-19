@@ -46,17 +46,17 @@
     <!-- Whole Word Constraints -->
     <div>
       <label for="outLetters">Out Letters (exclude):</label>
-      <input id="outLetters" type="text" v-model="outLetters" placeholder="e.g., xq">
+      <input id="outLetters" type="text" v-model="outLetters" placeholder="e.g., xq" autocapitalize="none">
     </div>
     <div>
       <label for="inLetters">In Letters (include):</label>
-      <input id="inLetters" type="text" v-model="inLetters" placeholder="e.g., t">
+      <input id="inLetters" type="text" v-model="inLetters" placeholder="e.g., t" autocapitalize="none">
     </div>
 
     <!-- Input Fields for Letter Constraints -->
     <div v-for="(input, index) in inputs" :key="index">
       <label>Position {{ index + 1 }}:</label>
-      <input type="text" v-model="input.value" placeholder="Letters">
+      <input type="text" v-model="input.value" placeholder="Letters" autocapitalize="none">
       <div class="toggle">
         <label>
           <input type="radio" v-model="input.mode" value="disallow"> Disallow
