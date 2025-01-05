@@ -26,6 +26,7 @@ abidi
 abies
 abilo
 abkar
+abled
 abler
 ablow
 abmho
@@ -623,6 +624,7 @@ artar
 artel
 artha
 artie
+artsy
 aruac
 aruke
 arulo
@@ -723,6 +725,7 @@ aulic
 auloi
 aulos
 aumil
+aunty
 aurae
 aural
 aurar
@@ -951,6 +954,7 @@ bauno
 baure
 bauta
 bavin
+bawdy
 bawra
 bayal
 bayed
@@ -1008,6 +1012,7 @@ befit
 befog
 befop
 begad
+began
 begar
 begat
 begay
@@ -1118,6 +1123,7 @@ bhima
 biabo
 bibio
 bible
+bicep
 bichy
 bidar
 biddy
@@ -1203,6 +1209,7 @@ blear
 bleat
 bleck
 bleed
+bleep
 blend
 blent
 bless
@@ -1220,6 +1227,7 @@ blizz
 bloat
 block
 bloke
+blond
 blood
 bloom
 bloop
@@ -1514,6 +1522,7 @@ burse
 burst
 burut
 busby
+bused
 bushi
 bushy
 busky
@@ -1634,6 +1643,7 @@ cappy
 capra
 capri
 capsa
+caput
 carat
 carbo
 cardo
@@ -1681,6 +1691,7 @@ catty
 cauch
 cauda
 cauld
+caulk
 cauma
 caupo
 cause
@@ -1965,6 +1976,7 @@ clout
 clove
 clown
 cluck
+clued
 cluff
 clump
 clung
@@ -2028,6 +2040,7 @@ compo
 comus
 conal
 conch
+condo
 coned
 coner
 cones
@@ -2108,6 +2121,7 @@ cours
 court
 couth
 coved
+coven
 cover
 covet
 covey
@@ -2155,6 +2169,7 @@ creel
 creem
 creen
 creep
+creme
 crena
 crepe
 crept
@@ -2274,6 +2289,7 @@ cutis
 cutty
 cutup
 cyath
+cyber
 cycad
 cycas
 cycle
@@ -2377,6 +2393,7 @@ debby
 debby
 deben
 debit
+debug
 debus
 debut
 decad
@@ -2386,6 +2403,7 @@ decap
 decay
 decil
 decke
+decor
 decoy
 decry
 decus
@@ -2421,6 +2439,7 @@ demob
 demon
 demon
 demos
+demur
 denat
 denda
 deneb
@@ -2450,6 +2469,7 @@ detar
 detax
 deter
 detin
+detox
 detur
 deuce
 devil
@@ -2475,6 +2495,7 @@ diana
 diane
 diary
 dicer
+dicey
 dicky
 dicot
 dicta
@@ -2522,6 +2543,7 @@ dipus
 dirca
 dirge
 dirty
+disco
 disme
 disna
 dital
@@ -2582,6 +2604,7 @@ donna
 donne
 donor
 donum
+donut
 dooja
 dooli
 dooly
@@ -2685,6 +2708,7 @@ drusy
 druxy
 dryad
 dryas
+dryer
 dryly
 dryth
 duala
@@ -2841,6 +2865,7 @@ elves
 elvet
 elvis
 elymi
+email
 embar
 embay
 embed
@@ -2905,6 +2930,7 @@ ephor
 epoch
 epode
 epopt
+epoxy
 eppie
 epsom
 epulo
@@ -3076,11 +3102,13 @@ feist
 felid
 felis
 felix
+fella
 felly
 felon
 felty
 felup
 femic
+femme
 femur
 fence
 fendy
@@ -3106,6 +3134,7 @@ fetus
 feuar
 feued
 fever
+fewer
 fezzy
 fiard
 fiber
@@ -3163,6 +3192,7 @@ fixed
 fixer
 fizzy
 fjeld
+fjord
 flack
 flaff
 flail
@@ -3429,6 +3459,7 @@ galli
 gally
 galop
 gamba
+gamer
 gamic
 gamin
 gamma
@@ -3482,6 +3513,8 @@ gavia
 gawby
 gawky
 gayal
+gayer
+gayly
 gazee
 gazel
 gazer
@@ -3489,6 +3522,7 @@ gazon
 gease
 gebur
 gecko
+geeky
 geese
 geest
 geira
@@ -3561,6 +3595,7 @@ ginny
 ginny
 gipon
 gippy
+gipsy
 girba
 girly
 girny
@@ -3667,6 +3702,7 @@ gonne
 gonys
 goods
 goody
+gooey
 goofy
 gools
 gooma
@@ -3940,6 +3976,7 @@ haulm
 haunt
 hausa
 hause
+haute
 havel
 haven
 haver
@@ -3958,6 +3995,7 @@ heady
 heald
 heaps
 heapy
+heard
 heart
 heath
 heave
@@ -3974,6 +4012,7 @@ heiau
 heidi
 heigh
 heinz
+heist
 helen
 helge
 helio
@@ -4210,6 +4249,7 @@ idler
 idola
 idose
 idryl
+idyll
 ierne
 igara
 igdyr
@@ -4255,6 +4295,7 @@ inaja
 inane
 inapt
 inarm
+inbox
 incan
 incog
 incur
@@ -4306,6 +4347,7 @@ insee
 inset
 inter
 intil
+intro
 intue
 inula
 inure
@@ -4772,6 +4814,7 @@ kreis
 krems
 kreng
 krepi
+krill
 krina
 krome
 krona
@@ -4897,6 +4940,7 @@ lathe
 lathy
 latin
 latro
+latte
 latus
 lauan
 laugh
@@ -4936,6 +4980,7 @@ ledum
 leech
 leeky
 leery
+lefty
 legal
 leger
 leges
@@ -5058,6 +5103,7 @@ linty
 linum
 linus
 lipan
+lipid
 lipin
 lippy
 lisle
@@ -5221,6 +5267,7 @@ macaw
 macco
 macer
 machi
+macho
 macle
 macon
 macro
@@ -5230,6 +5277,7 @@ madia
 madid
 madly
 madoc
+mafia
 mafic
 mafoo
 magas
@@ -5458,6 +5506,7 @@ metin
 metis
 metol
 metra
+metro
 metze
 meuse
 meute
@@ -5548,6 +5597,7 @@ mocha
 mocoa
 modal
 model
+modem
 modoc
 moggy
 mogul
@@ -5647,6 +5697,7 @@ moudy
 mould
 moule
 mouls
+moult
 mouly
 mound
 mount
@@ -5851,6 +5902,7 @@ nenta
 neoza
 nepal
 neper
+nerdy
 nerve
 nervy
 nesty
@@ -5866,6 +5918,7 @@ nevoy
 nevus
 newar
 newel
+newer
 newly
 newsy
 nexal
@@ -5877,6 +5930,7 @@ ngoko
 niall
 niata
 nibby
+nicer
 niche
 nicky
 nicol
@@ -6036,11 +6090,13 @@ ocote
 ocque
 ocrea
 octad
+octal
 octan
 octet
 octic
 octyl
 ocuby
+odder
 oddly
 odeon
 odeum
@@ -6087,6 +6143,7 @@ olson
 omaha
 omani
 omber
+ombre
 omega
 omina
 omlah
@@ -6332,6 +6389,7 @@ pasmo
 passe
 passe
 passo
+pasta
 paste
 pasty
 pasul
@@ -6407,6 +6465,7 @@ penda
 pengo
 penis
 penna
+penne
 penni
 penny
 penny
@@ -6432,6 +6491,7 @@ perun
 pesah
 pesky
 peste
+pesto
 petal
 peter
 peter
@@ -6557,6 +6617,7 @@ pithy
 pitta
 piuri
 pivot
+pixel
 pixie
 pizza
 place
@@ -6720,6 +6781,7 @@ prier
 prill
 prima
 prime
+primo
 primp
 primy
 prine
@@ -6747,6 +6809,7 @@ pross
 prosy
 prote
 proto
+proud
 prove
 prowl
 proxy
@@ -6809,6 +6872,7 @@ purre
 purry
 purse
 pursy
+pushy
 pussy
 putid
 putty
@@ -6926,6 +6990,7 @@ ramal
 raman
 rambo
 ramed
+ramen
 ramet
 ramex
 ramie
@@ -6947,6 +7012,7 @@ raphe
 rapic
 rapid
 rappe
+rarer
 rasen
 raser
 raspy
@@ -7047,6 +7113,7 @@ regin
 regle
 regma
 regur
+rehab
 rehoe
 reify
 reign
@@ -7112,6 +7179,7 @@ retia
 retie
 retin
 retip
+retro
 retry
 reuel
 reune
@@ -7292,6 +7360,7 @@ ruche
 rucky
 rudas
 ruddy
+ruder
 rudge
 rufus
 rufus
@@ -7301,6 +7370,7 @@ ruing
 ruler
 rumal
 ruman
+rumba
 rumbo
 rumen
 rumex
@@ -7356,6 +7426,7 @@ sadie
 sadly
 safar
 safen
+safer
 sagai
 saggy
 sagra
@@ -7399,6 +7470,7 @@ salol
 salon
 salpa
 salpa
+salsa
 salse
 salta
 salty
@@ -7424,6 +7496,7 @@ sanct
 sancy
 sandy
 sandy
+saner
 sanga
 sansi
 santa
@@ -7573,6 +7646,7 @@ scrow
 scrub
 scruf
 scrum
+scuba
 scudi
 scudo
 scuff
@@ -8559,6 +8633,7 @@ super
 surah
 sural
 surat
+surer
 sures
 surfy
 surge
@@ -8568,6 +8643,7 @@ surma
 surra
 surya
 susan
+sushi
 susie
 sutor
 sutra
@@ -8859,6 +8935,7 @@ tereu
 terma
 terna
 terne
+terra
 terri
 terry
 terry
@@ -9497,6 +9574,7 @@ unwet
 unwig
 unwon
 unzen
+unzip
 uparm
 upbar
 upbay
@@ -9568,6 +9646,7 @@ usara
 usent
 ushak
 usher
+using
 uskok
 usnea
 usnea
@@ -9644,6 +9723,7 @@ vedda
 vedic
 vedro
 veery
+vegan
 veily
 veiny
 vejoz
@@ -9742,6 +9822,7 @@ vodka
 vogue
 vogul
 voice
+voila
 voile
 volar
 volet
@@ -9864,6 +9945,7 @@ weigh
 weird
 weism
 wekau
+welch
 welly
 welsh
 welsh
@@ -9952,6 +10034,7 @@ wicht
 wicky
 widdy
 widen
+wider
 widow
 width
 wield
@@ -9962,6 +10045,7 @@ wight
 wilga
 willy
 willy
+wimpy
 wince
 winch
 windy
@@ -9999,11 +10083,13 @@ wodge
 wodgy
 woibe
 wokas
+woken
 woldy
 wolof
 wolve
 woman
 womby
+women
 wonga
 wonky
 wonna
@@ -10012,6 +10098,7 @@ woody
 wooer
 woofy
 woold
+wooly
 woons
 woosh
 wootz
