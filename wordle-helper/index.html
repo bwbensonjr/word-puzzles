@@ -4,182 +4,320 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Wordle Helper</title>
-  <script src="https://cdn.jsdelivr.net/npm/vue@3"></script>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lucide-static@latest/font/Lucide.css">
   <style>
+    /* Basic body styling */
     body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
+      font-family: 'Inter', sans-serif; /* Use Inter font */
     }
-    input {
-      margin: 5px;
-      padding: 5px;
-      width: 80px;
-    }
-    .toggle {
+    /* Style for Lucide icons */
+    .lucide {
       display: inline-block;
-      margin-left: 10px;
+      width: 1em;
+      height: 1em;
+      stroke-width: 2;
+      stroke: currentColor;
+      fill: none;
+      vertical-align: middle; /* Align icons nicely with text */
+      margin-right: 0.25em; /* Add some space after the icon */
     }
-    button {
-      margin-top: 10px;
-      padding: 10px 15px;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      cursor: pointer;
+    /* Custom style for radio buttons for better alignment */
+    .radio-label {
+        display: inline-flex;
+        align-items: center;
+        margin-right: 1rem;
+        cursor: pointer;
     }
-    button:hover {
-      background-color: #0056b3;
-    }
-    ul {
-      list-style: none;
-      padding: 0;
-    }
-    li {
-      padding: 5px 0;
+    .radio-label input[type="radio"] {
+        margin-right: 0.3rem;
     }
   </style>
 </head>
-<body>
-  <div id="app">
-    <h1>Wordle Helper</h1>
+<body class="bg-gray-100 p-4 md:p-8">
+  <div id="app" class="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-md">
+    <h1 class="text-2xl font-bold mb-6 text-center text-gray-800">Wordle Helper</h1>
 
-    <!-- Whole Word Constraints -->
-    <div>
-      <label for="outLetters">Out Letters (exclude):</label>
-      <input id="outLetters" type="text" v-model="outLetters" placeholder="e.g., xq" autocapitalize="none">
-    </div>
-    <div>
-      <label for="inLetters">In Letters (include):</label>
-      <input id="inLetters" type="text" v-model="inLetters" placeholder="e.g., t" autocapitalize="none">
+    <div class="mb-4">
+      <label for="outLetters" class="block text-sm font-medium text-gray-700 mb-1">
+        <i class="lucide lucide-x-circle"></i>Exclude these letters entirely:
+      </label>
+      <input id="outLetters" type="text" v-model.trim="outLetters" placeholder="e.g., xqj" autocapitalize="none"
+             class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 lowercase">
     </div>
 
-    <!-- Input Fields for Letter Constraints -->
-    <div v-for="(input, index) in inputs" :key="index">
-      <label>Position {{ index + 1 }}:</label>
-      <input type="text" v-model="input.value" placeholder="Letters" autocapitalize="none">
-      <div class="toggle">
-        <label>
-          <input type="radio" v-model="input.mode" value="disallow"> Disallow
-        </label>
-        <label>
-          <input type="radio" v-model="input.mode" value="require"> Require
-        </label>
+    <div class="mb-6 p-3 bg-blue-50 border border-blue-200 rounded-md" v-if="computedInLetters">
+        <p class="text-sm font-medium text-blue-800">
+            <i class="lucide lucide-check-circle"></i>Must include: <span class="font-bold text-lg ml-2 tracking-widest">{{ computedInLetters }}</span>
+        </p>
+        <p class="text-xs text-blue-600 mt-1">(Automatically determined from 'Disallow' inputs below)</p>
+    </div>
+
+    <div class="space-y-4 mb-6">
+      <div v-for="(input, index) in inputs" :key="index" class="flex flex-col sm:flex-row sm:items-center p-3 bg-gray-50 rounded-md border border-gray-200">
+        <label class="w-full sm:w-1/4 font-medium text-gray-700 mb-2 sm:mb-0">Position {{ index + 1 }}:</label>
+        <div class="w-full sm:w-1/2 mb-2 sm:mb-0 sm:mr-4">
+            <input type="text" v-model.trim="input.value" placeholder="Letters" autocapitalize="none"
+                   class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 lowercase">
+        </div>
+        <div class="w-full sm:w-1/4 flex items-center space-x-4">
+          <label class="radio-label text-sm text-yellow-600">
+            <input type="radio" v-model="input.mode" value="disallow" class="text-yellow-500 focus:ring-yellow-400">
+            <i class="lucide lucide-alert-triangle"></i>Disallow
+          </label>
+          <label class="radio-label text-sm text-green-600">
+            <input type="radio" v-model="input.mode" value="require" class="text-green-500 focus:ring-green-400">
+            <i class="lucide lucide-check"></i>Require
+          </label>
+        </div>
       </div>
     </div>
 
-    <!-- Generate Button -->
-    <button @click="generateWordList">Generate Word List</button>
+    <button @click="generateWordList"
+            class="w-full flex justify-center items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">
+      <i class="lucide lucide-search mr-2"></i>Generate Word List
+    </button>
 
-    <!-- Results Section -->
-    <div v-if="wordList.length > 0">
-      <h3>Sorted Candidate Words</h3>
-      <ul>
-        <li v-for="word in wordList" :key="word">{{ word }}</li>
+    <div v-if="wordList.length > 0" class="mt-8">
+      <h3 class="text-lg font-semibold mb-3 text-gray-800">Sorted Candidate Words ({{ wordList.length }})</h3>
+      <ul class="bg-gray-50 p-4 rounded-md border border-gray-200 max-h-96 overflow-y-auto">
+        <li v-for="wordData in wordList" :key="wordData.word"
+            class="py-2 px-3 border-b border-gray-200 last:border-b-0 hover:bg-gray-100 flex justify-between items-center text-sm">
+            <span class="font-mono text-base tracking-wider">{{ wordData.word }}</span>
+            <span class="text-xs text-gray-500">Score: {{ wordData.score }} {{ wordData.repeatInfo }}</span>
+        </li>
       </ul>
     </div>
-    <div v-else-if="searched">
-      <p>No matching words found.</p>
+    <div v-else-if="searched" class="mt-8 text-center p-4 bg-yellow-50 border border-yellow-200 rounded-md">
+      <p class="text-yellow-800"><i class="lucide lucide-frown"></i>No matching words found.</p>
     </div>
   </div>
 
   <script>
-    const { createApp } = Vue;
+    const { createApp, ref, computed, onMounted } = Vue;
 
     createApp({
-      data() {
-        return {
-          outLetters: "",      // Letters to exclude from the entire word
-          inLetters: "",       // Letters that must be included in the word
-          inputs: [
-            { value: "", mode: "disallow" },
-            { value: "", mode: "disallow" },
-            { value: "", mode: "disallow" },
-            { value: "", mode: "disallow" },
-            { value: "", mode: "disallow" }
-          ], // Array of inputs for 5 positions
-          wordList: [],        // Sorted list of candidate words
-          searched: false,     // Flag to track if a search was performed
-          dictionary: []       // Word list loaded from file or API
-        };
-      },
-      mounted() {
-        // Load the dictionary on app load
-        fetch('word-list-5.txt')
-          .then(response => response.text())
-          .then(data => {
-            this.dictionary = data.split(/\r?\n/).filter(word => word.length > 0).sort();
+      setup() {
+        // Reactive state variables
+        const outLetters = ref(""); // Letters to exclude from the entire word
+        const inputs = ref([ // Array of inputs for 5 positions
+          { value: "", mode: "disallow" },
+          { value: "", mode: "disallow" },
+          { value: "", mode: "disallow" },
+          { value: "", mode: "disallow" },
+          { value: "", mode: "disallow" }
+        ]);
+        const wordList = ref([]); // Sorted list of candidate words { word: '...', score: ..., repeatInfo: '...' }
+        const searched = ref(false); // Flag to track if a search was performed
+        const dictionary = ref([]); // Word list loaded from file
+
+        // --- Computed Property for 'In Letters' ---
+        // Automatically determines letters that MUST be in the word
+        // based on letters entered in "disallow" fields.
+        const computedInLetters = computed(() => {
+          const letters = new Set();
+          inputs.value.forEach(input => {
+            // If mode is 'disallow' and there's a value
+            if (input.mode === 'disallow' && input.value) {
+              // Add each letter from the input value to the set
+              // Using a Set automatically handles uniqueness
+              for (const char of input.value.toLowerCase()) {
+                  // Only add letters, ignore other characters if any
+                  if (char >= 'a' && char <= 'z') {
+                      letters.add(char);
+                  }
+              }
+            }
           });
-      },
-      methods: {
-        generateWordList() {
-          const pattern = this.constructPattern();
-          if (!pattern) {
-            alert("Invalid pattern. Please check your inputs.");
-            return;
+          // Convert the Set to a sorted string
+          return Array.from(letters).sort().join('');
+        });
+
+        // --- Methods ---
+
+        // Load the dictionary when the component is mounted
+        onMounted(async () => {
+          try {
+            // IMPORTANT: Create a file named 'word-list-5.txt' in the same directory
+            // as this HTML file. It should contain 5-letter words, one per line.
+            const response = await fetch('word-list-5.txt');
+            if (!response.ok) {
+                // Throw an error if the file is not found or another HTTP error occurs
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.text();
+            // Filter out empty lines and ensure words are lowercase
+            dictionary.value = data.split(/\r?\n/)
+                                   .map(word => word.trim().toLowerCase())
+                                   .filter(word => word.length === 5) // Ensure only 5-letter words
+                                   .sort();
+             console.log(`Loaded ${dictionary.value.length} words.`);
+          } catch (error) {
+            // Log the error to the console
+            console.error("Error loading word list:", error);
+            // Alert the user that the word list failed to load
+            alert("Failed to load word list ('word-list-5.txt'). Please ensure the file exists and is accessible. The application will not function correctly without it.");
+            // *** Fallback list removed as requested ***
+            // dictionary.value = ['apple', 'table', 'chair', 'crane', 'audio'];
           }
-          this.searched = true;
-          this.wordList = this.matchingWordList(pattern, this.outLetters, this.inLetters);
-        },
-        constructPattern() {
-          // Build the regex pattern from the inputs
-          return this.inputs
+        });
+
+        // Generate the word list based on current constraints
+        const generateWordList = () => {
+          // Check if dictionary is empty before proceeding
+          if (dictionary.value.length === 0) {
+              alert("Word list is not loaded. Cannot generate suggestions.");
+              return;
+          }
+
+          const pattern = constructPattern();
+          // Basic validation for regex pattern construction
+          if (!pattern || pattern.length !== 5) {
+             console.error("Invalid pattern constructed:", pattern);
+             alert("Invalid pattern generated. Please check your inputs. Ensure each position results in a valid character match.");
+             return;
+          }
+          searched.value = true; // Mark that a search has been attempted
+          // Use the computedInLetters value here
+          wordList.value = matchingWordList(pattern, outLetters.value.toLowerCase(), computedInLetters.value);
+        };
+
+        // Construct the regex pattern string from the inputs
+        const constructPattern = () => {
+          return inputs.value
             .map(input => {
-              if (input.mode === "disallow" && input.value) {
-                return `[^${input.value}]`; // Exclude letters
-              } else if (input.mode === "require" && input.value) {
-                return `[${input.value}]`; // Include letters
+              const cleanValue = input.value.toLowerCase().replace(/[^a-z]/g, ''); // Sanitize input
+              if (input.mode === "disallow" && cleanValue) {
+                // Exclude these specific letters from this position
+                return `[^${cleanValue}]`;
+              } else if (input.mode === "require" && cleanValue) {
+                // Require one of these specific letters at this position
+                 return `[${cleanValue}]`;
               } else {
-                return "."; // Wildcard
+                // Wildcard: matches any single character if no constraints are given for this position
+                return ".";
               }
             })
-            .join("");
-        },
-        matchingWordList(pattern, outLetters, inLetters) {
-          const matchingWords = this.matching(pattern, outLetters, inLetters);
-          const counters = this.calculateWeights(matchingWords);
-          const scores = matchingWords.map(word => this.scoreWord(word, counters));
+            .join(""); // Join the parts into a single regex string like "[^a].[^b]c.."
+        };
+
+        // Filter the dictionary and calculate scores
+        const matchingWordList = (pattern, currentOutLetters, currentInLetters) => {
+          const matchingWords = matching(pattern, currentOutLetters, currentInLetters);
+          if (matchingWords.length === 0) return [];
+
+          const counters = calculateWeights(matchingWords);
+
           return matchingWords
-            .map((word, index) => {
-              const score = scores[index];
-              const numReps = this.numRepeats(word);
-              const repeatInfo = numReps > 0 ? `${numReps}` : "";
-              return `${score}: ${word} ${repeatInfo}`;
+            .map(word => {
+              const score = scoreWord(word, counters);
+              const numReps = numRepeats(word);
+              const repeatInfo = numReps > 0 ? `(${numReps} repeat${numReps > 1 ? 's' : ''})` : "";
+              return { word, score, repeatInfo }; // Return structured data
             })
-            .sort((a, b) => parseFloat(b) - parseFloat(a)); // Sort in descending order
-        },
-        matching(exprString, outLetters, inLetters) {
-          const expr = new RegExp(`^${exprString}$`);
-          return this.dictionary.filter(word => {
-            if (!expr.test(word)) return false;
-            if (outLetters && [...outLetters].some(letter => word.includes(letter))) return false;
-            if (inLetters && [...inLetters].some(letter => !word.includes(letter))) return false;
-            return true;
-          });
-        },
-        calculateWeights(words) {
-          const counters = [];
-          for (let i = 0; i < 5; i++) {
-            const counter = {};
-            words.forEach(word => {
-              const char = word[i];
-              counter[char] = (counter[char] || 0) + 1;
-            });
-            counters.push(counter);
+            .sort((a, b) => b.score - a.score); // Sort by score descending
+        };
+
+        // Core filtering logic based on regex and letter constraints
+        const matching = (exprString, currentOutLetters, currentInLetters) => {
+          // Ensure dictionary is loaded before attempting to filter
+          if (dictionary.value.length === 0) {
+              console.warn("Attempted to filter with an empty dictionary.");
+              return [];
           }
+          try {
+            const expr = new RegExp(`^${exprString}$`);
+            const outSet = new Set(currentOutLetters); // Use Set for efficient lookup
+            const inSet = new Set(currentInLetters);
+
+            return dictionary.value.filter(word => {
+              // 1. Check if word matches the positional regex pattern
+              if (!expr.test(word)) return false;
+
+              // 2. Check if word contains any globally excluded letters ('outLetters')
+              for (const letter of word) {
+                if (outSet.has(letter)) return false;
+              }
+
+              // 3. Check if word contains all required letters ('computedInLetters')
+              for (const requiredLetter of inSet) {
+                if (!word.includes(requiredLetter)) return false;
+              }
+
+              // 4. Additional check: Ensure letters marked 'disallow' at a position
+              //    are not actually *at* that position in the word.
+              for(let i = 0; i < inputs.value.length; i++) {
+                  const input = inputs.value[i];
+                  if (input.mode === 'disallow' && input.value) {
+                      const disallowedChars = input.value.toLowerCase();
+                      if (disallowedChars.includes(word[i])) {
+                           return false;
+                      }
+                  }
+              }
+
+              // If all checks pass, include the word
+              return true;
+            });
+          } catch (e) {
+              console.error("Regex Error:", e);
+              alert(`Error creating filter pattern: ${e.message}. Please check your inputs.`);
+              return []; // Return empty list on regex error
+          }
+        };
+
+        // Calculate letter frequency weights for scoring
+        const calculateWeights = (words) => {
+          const counters = Array(5).fill(null).map(() => ({})); // Array of 5 empty objects
+          words.forEach(word => {
+            for (let i = 0; i < 5; i++) {
+              const char = word[i];
+              counters[i][char] = (counters[i][char] || 0) + 1;
+            }
+          });
           return counters;
-        },
-        scoreWord(word, counters) {
-          return word.split('').reduce((score, char, index) => {
-            return score + (counters[index][char] || 0);
-          }, 0);
-        },
-        numRepeats(word) {
-          const charCounts = word.split('').reduce((counter, char) => {
-            counter[char] = (counter[char] || 0) + 1;
-            return counter;
-          }, {});
-          return Object.values(charCounts).reduce((sum, count) => sum + (count > 1 ? count - 1 : 0), 0);
-        }
+        };
+
+        // Score a word based on letter frequency at each position
+        const scoreWord = (word, counters) => {
+          let score = 0;
+          const uniqueLetters = new Set(word);
+          uniqueLetters.forEach(char => {
+              for (let i = 0; i < 5; i++) {
+                  if (word[i] === char) {
+                      score += (counters[i][char] || 0);
+                  }
+              }
+          });
+          return score;
+        };
+
+
+        // Count repeated letters in a word
+        const numRepeats = (word) => {
+          const charCounts = {};
+          for (const char of word) {
+            charCounts[char] = (charCounts[char] || 0) + 1;
+          }
+          let repeats = 0;
+          for (const char in charCounts) {
+            if (charCounts[char] > 1) {
+              repeats += charCounts[char] - 1; // Count only the repetitions
+            }
+          }
+          return repeats;
+        };
+
+        // Return reactive state and methods to the template
+        return {
+          outLetters,
+          inputs,
+          wordList,
+          searched,
+          computedInLetters, // Expose the computed property
+          generateWordList
+        };
       }
     }).mount("#app");
   </script>
