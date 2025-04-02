@@ -33,6 +33,18 @@
     .radio-label input[type="radio"] {
         margin-right: 0.3rem;
     }
+    /* Custom style for checkbox alignment */
+    .checkbox-label {
+        display: inline-flex;
+        align-items: center;
+        cursor: pointer;
+    }
+    .checkbox-label input[type="checkbox"] {
+        margin-right: 0.5rem;
+        height: 1rem;
+        width: 1rem;
+        border-radius: 0.25rem; /* Slightly rounded corners for checkbox */
+    }
   </style>
 </head>
 <body class="bg-gray-100 p-4 md:p-8">
@@ -74,6 +86,14 @@
       </div>
     </div>
 
+    <div class="mb-6">
+        <label class="checkbox-label text-sm font-medium text-gray-700">
+            <input type="checkbox" v-model="excludeRepeats"
+                   class="text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+            Exclude words with repeats
+        </label>
+    </div>
+
     <button @click="generateWordList"
             class="w-full flex justify-center items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">
       <i class="lucide lucide-search mr-2"></i>Generate Word List
@@ -102,35 +122,27 @@
         // Reactive state variables
         const outLetters = ref(""); // Letters to exclude from the entire word
         const inputs = ref([ // Array of inputs for 5 positions
-          { value: "", mode: "disallow" },
-          { value: "", mode: "disallow" },
-          { value: "", mode: "disallow" },
-          { value: "", mode: "disallow" },
+          { value: "", mode: "disallow" }, { value: "", mode: "disallow" },
+          { value: "", mode: "disallow" }, { value: "", mode: "disallow" },
           { value: "", mode: "disallow" }
         ]);
+        const excludeRepeats = ref(false); // NEW: State for the checkbox
         const wordList = ref([]); // Sorted list of candidate words { word: '...', score: ..., repeatInfo: '...' }
         const searched = ref(false); // Flag to track if a search was performed
         const dictionary = ref([]); // Word list loaded from file
 
         // --- Computed Property for 'In Letters' ---
-        // Automatically determines letters that MUST be in the word
-        // based on letters entered in "disallow" fields.
         const computedInLetters = computed(() => {
           const letters = new Set();
           inputs.value.forEach(input => {
-            // If mode is 'disallow' and there's a value
             if (input.mode === 'disallow' && input.value) {
-              // Add each letter from the input value to the set
-              // Using a Set automatically handles uniqueness
               for (const char of input.value.toLowerCase()) {
-                  // Only add letters, ignore other characters if any
-                  if (char >= 'a' && char <= 'z') {
-                      letters.add(char);
-                  }
+                if (char >= 'a' && char <= 'z') {
+                  letters.add(char);
+                }
               }
             }
           });
-          // Convert the Set to a sorted string
           return Array.from(letters).sort().join('');
         });
 
@@ -139,72 +151,64 @@
         // Load the dictionary when the component is mounted
         onMounted(async () => {
           try {
-            // IMPORTANT: Create a file named 'word-list-5.txt' in the same directory
-            // as this HTML file. It should contain 5-letter words, one per line.
             const response = await fetch('word-list-5.txt');
             if (!response.ok) {
-                // Throw an error if the file is not found or another HTTP error occurs
-                throw new Error(`HTTP error! status: ${response.status}`);
+              throw new Error(`HTTP error! status: ${response.status}`);
             }
             const data = await response.text();
-            // Filter out empty lines and ensure words are lowercase
             dictionary.value = data.split(/\r?\n/)
                                    .map(word => word.trim().toLowerCase())
-                                   .filter(word => word.length === 5) // Ensure only 5-letter words
+                                   .filter(word => word.length === 5)
                                    .sort();
              console.log(`Loaded ${dictionary.value.length} words.`);
           } catch (error) {
-            // Log the error to the console
             console.error("Error loading word list:", error);
-            // Alert the user that the word list failed to load
             alert("Failed to load word list ('word-list-5.txt'). Please ensure the file exists and is accessible. The application will not function correctly without it.");
           }
         });
 
         // Generate the word list based on current constraints
         const generateWordList = () => {
-          // Check if dictionary is empty before proceeding
           if (dictionary.value.length === 0) {
               alert("Word list is not loaded. Cannot generate suggestions.");
               return;
           }
-
           const pattern = constructPattern();
-          // Basic validation: Check if pattern construction returned a string.
-          // The actual regex syntax validity is checked when new RegExp() is called later.
-          // *** Removed incorrect check: pattern.length !== 5 ***
           if (!pattern) {
              console.error("Pattern construction failed.");
              alert("Could not construct a valid pattern from inputs.");
              return;
           }
-          searched.value = true; // Mark that a search has been attempted
-          // Use the computedInLetters value here
-          wordList.value = matchingWordList(pattern, outLetters.value.toLowerCase(), computedInLetters.value);
+          searched.value = true;
+          // Pass necessary values to matchingWordList
+          wordList.value = matchingWordList(
+              pattern,
+              outLetters.value.toLowerCase(),
+              computedInLetters.value,
+              excludeRepeats.value // Pass checkbox state
+          );
         };
 
         // Construct the regex pattern string from the inputs
         const constructPattern = () => {
           return inputs.value
             .map(input => {
-              const cleanValue = input.value.toLowerCase().replace(/[^a-z]/g, ''); // Sanitize input
+              const cleanValue = input.value.toLowerCase().replace(/[^a-z]/g, '');
               if (input.mode === "disallow" && cleanValue) {
-                // Exclude these specific letters from this position
                 return `[^${cleanValue}]`;
               } else if (input.mode === "require" && cleanValue) {
-                // Require one of these specific letters at this position
                  return `[${cleanValue}]`;
               } else {
-                // Wildcard: matches any single character if no constraints are given for this position
                 return ".";
               }
             })
-            .join(""); // Join the parts into a single regex string like "[^a].[^b]c.."
+            .join("");
         };
 
         // Filter the dictionary and calculate scores
-        const matchingWordList = (pattern, currentOutLetters, currentInLetters) => {
-          const matchingWords = matching(pattern, currentOutLetters, currentInLetters);
+        const matchingWordList = (pattern, currentOutLetters, currentInLetters, shouldExcludeRepeats) => {
+          // Pass the excludeRepeats flag to the matching function
+          const matchingWords = matching(pattern, currentOutLetters, currentInLetters, shouldExcludeRepeats);
           if (matchingWords.length === 0) return [];
 
           const counters = calculateWeights(matchingWords);
@@ -212,24 +216,28 @@
           return matchingWords
             .map(word => {
               const score = scoreWord(word, counters);
-              const numReps = numRepeats(word);
+              const numReps = numRepeats(word); // Still calculate for display info if needed
               const repeatInfo = numReps > 0 ? `(${numReps} repeat${numReps > 1 ? 's' : ''})` : "";
-              return { word, score, repeatInfo }; // Return structured data
+              return { word, score, repeatInfo };
             })
-            .sort((a, b) => b.score - a.score); // Sort by score descending
+            .sort((a, b) => b.score - a.score);
+        };
+
+        // NEW Helper function to check for repeated letters
+        const hasRepeats = (word) => {
+            // If the length of the Set of characters is less than the word length, there are repeats.
+            return new Set(word).size !== word.length;
         };
 
         // Core filtering logic based on regex and letter constraints
-        const matching = (exprString, currentOutLetters, currentInLetters) => {
-          // Ensure dictionary is loaded before attempting to filter
+        const matching = (exprString, currentOutLetters, currentInLetters, shouldExcludeRepeats) => {
           if (dictionary.value.length === 0) {
               console.warn("Attempted to filter with an empty dictionary.");
               return [];
           }
           try {
-            // This is where the regex syntax is actually validated.
             const expr = new RegExp(`^${exprString}$`);
-            const outSet = new Set(currentOutLetters); // Use Set for efficient lookup
+            const outSet = new Set(currentOutLetters);
             const inSet = new Set(currentInLetters);
 
             return dictionary.value.filter(word => {
@@ -246,8 +254,7 @@
                 if (!word.includes(requiredLetter)) return false;
               }
 
-              // 4. Additional check: Ensure letters marked 'disallow' at a position
-              //    are not actually *at* that position in the word. (Redundant with regex but safe)
+              // 4. Check for disallowed letters at specific positions (redundant check)
               for(let i = 0; i < inputs.value.length; i++) {
                   const input = inputs.value[i];
                   if (input.mode === 'disallow' && input.value) {
@@ -258,20 +265,24 @@
                   }
               }
 
+              // 5. NEW: Check if repeats should be excluded and if the word has repeats
+              if (shouldExcludeRepeats && hasRepeats(word)) {
+                  return false;
+              }
+
               // If all checks pass, include the word
               return true;
             });
           } catch (e) {
-              // Catch errors during RegExp creation (e.g., invalid pattern syntax)
               console.error("Regex Error:", e);
               alert(`Error creating filter pattern: ${e.message}. Please check your inputs.`);
-              return []; // Return empty list on regex error
+              return [];
           }
         };
 
         // Calculate letter frequency weights for scoring
         const calculateWeights = (words) => {
-          const counters = Array(5).fill(null).map(() => ({})); // Array of 5 empty objects
+          const counters = Array(5).fill(null).map(() => ({}));
           words.forEach(word => {
             for (let i = 0; i < 5; i++) {
               const char = word[i];
@@ -295,8 +306,7 @@
           return score;
         };
 
-
-        // Count repeated letters in a word
+        // Count repeated letters in a word (used for display info)
         const numRepeats = (word) => {
           const charCounts = {};
           for (const char of word) {
@@ -305,7 +315,7 @@
           let repeats = 0;
           for (const char in charCounts) {
             if (charCounts[char] > 1) {
-              repeats += charCounts[char] - 1; // Count only the repetitions
+              repeats += charCounts[char] - 1;
             }
           }
           return repeats;
@@ -315,9 +325,10 @@
         return {
           outLetters,
           inputs,
+          excludeRepeats, // Expose the new state variable
           wordList,
           searched,
-          computedInLetters, // Expose the computed property
+          computedInLetters,
           generateWordList
         };
       }
