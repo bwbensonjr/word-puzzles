@@ -158,8 +158,6 @@
             console.error("Error loading word list:", error);
             // Alert the user that the word list failed to load
             alert("Failed to load word list ('word-list-5.txt'). Please ensure the file exists and is accessible. The application will not function correctly without it.");
-            // *** Fallback list removed as requested ***
-            // dictionary.value = ['apple', 'table', 'chair', 'crane', 'audio'];
           }
         });
 
@@ -172,10 +170,12 @@
           }
 
           const pattern = constructPattern();
-          // Basic validation for regex pattern construction
-          if (!pattern || pattern.length !== 5) {
-             console.error("Invalid pattern constructed:", pattern);
-             alert("Invalid pattern generated. Please check your inputs. Ensure each position results in a valid character match.");
+          // Basic validation: Check if pattern construction returned a string.
+          // The actual regex syntax validity is checked when new RegExp() is called later.
+          // *** Removed incorrect check: pattern.length !== 5 ***
+          if (!pattern) {
+             console.error("Pattern construction failed.");
+             alert("Could not construct a valid pattern from inputs.");
              return;
           }
           searched.value = true; // Mark that a search has been attempted
@@ -227,6 +227,7 @@
               return [];
           }
           try {
+            // This is where the regex syntax is actually validated.
             const expr = new RegExp(`^${exprString}$`);
             const outSet = new Set(currentOutLetters); // Use Set for efficient lookup
             const inSet = new Set(currentInLetters);
@@ -246,7 +247,7 @@
               }
 
               // 4. Additional check: Ensure letters marked 'disallow' at a position
-              //    are not actually *at* that position in the word.
+              //    are not actually *at* that position in the word. (Redundant with regex but safe)
               for(let i = 0; i < inputs.value.length; i++) {
                   const input = inputs.value[i];
                   if (input.mode === 'disallow' && input.value) {
@@ -261,6 +262,7 @@
               return true;
             });
           } catch (e) {
+              // Catch errors during RegExp creation (e.g., invalid pattern syntax)
               console.error("Regex Error:", e);
               alert(`Error creating filter pattern: ${e.message}. Please check your inputs.`);
               return []; // Return empty list on regex error
