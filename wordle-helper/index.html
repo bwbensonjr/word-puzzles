@@ -99,20 +99,26 @@
       <i class="lucide lucide-search mr-2"></i>Generate Word List
     </button>
 
-    <div v-if="wordList.length > 0" class="mt-8">
-      <h3 class="text-lg font-semibold mb-3 text-gray-800">Sorted Candidate Words ({{ wordList.length }})</h3>
-      <ul class="bg-gray-50 p-4 rounded-md border border-gray-200 max-h-96 overflow-y-auto">
-        <li v-for="wordData in wordList" :key="wordData.word"
-            class="py-2 px-3 border-b border-gray-200 last:border-b-0 hover:bg-gray-100 flex justify-between items-center text-sm">
-            <span class="font-mono text-base tracking-wider">{{ wordData.word }}</span>
-            <span class="text-xs text-gray-500">Score: {{ wordData.score }} {{ wordData.repeatInfo }}</span>
-        </li>
-      </ul>
-    </div>
-    <div v-else-if="searched" class="mt-8 text-center p-4 bg-yellow-50 border border-yellow-200 rounded-md">
-      <p class="text-yellow-800"><i class="lucide lucide-frown"></i>No matching words found.</p>
-    </div>
-  </div>
+<div v-if="wordList.length > 0" class="mt-8">
+  <h3 class="text-lg font-semibold mb-3 text-gray-800">Sorted Candidate Words ({{ wordList.length }})</h3>
+  <ul class="bg-gray-50 p-4 rounded-md border border-gray-200 max-h-96 overflow-y-auto">
+    <li v-for="wordData in wordList" :key="wordData.word"
+        class="py-2 px-3 border-b border-gray-200 last:border-b-0 hover:bg-gray-100 flex justify-between items-center text-sm">
+        <div class="flex items-center">
+          <span class="font-mono text-base tracking-wider" :class="{ 'font-bold': wordData.repeatInfo && !excludeRepeats }">
+            {{ wordData.word }}
+          </span>
+          <i v-if="wordData.repeatInfo && !excludeRepeats" 
+             class="lucide lucide-repeat ml-1 text-gray-500" 
+             aria-label="Contains repeat letters"></i>
+        </div>
+        <span class="text-xs text-gray-500">Score: {{ wordData.score }} {{ wordData.repeatInfo }}</span>
+    </li>
+  </ul>
+</div>
+<div v-else-if="searched" class="mt-8 text-center p-4 bg-yellow-50 border border-yellow-200 rounded-md">
+  <p class="text-yellow-800"><i class="lucide lucide-frown"></i>No matching words found.</p>
+</div>    
 
   <script>
     const { createApp, ref, computed, onMounted } = Vue;
