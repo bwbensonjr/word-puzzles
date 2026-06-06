@@ -1,0 +1,4 @@
+# Downloaded data and the NYT session cookie (secret) — never commit these.
+data/
+.nyt_cookie
+__pycache__/

@@ -31,6 +31,10 @@ python -m http.server 8000         # then open http://localhost:8000/index.html
 cd wordle-research
 uv sync                             # install dependencies into .venv
 uv run python wordle_history.py     # module currently exposes functions; no main()
+
+# Download personal NYT Wordle history (needs the NYT-S cookie; see README)
+uv run python nyt_history.py extract-cookie   # after logging in via webctl
+uv run python nyt_history.py download         # -> data/wordle_personal_history.csv
 ```
 
 ## Architecture notes
@@ -42,6 +46,8 @@ uv run python wordle_history.py     # module currently exposes functions; no mai
 - **`wordle-research` data source.** Past solutions are fetched live from `HISTORY_URL` (an S3-hosted `history.csv`); `score_word`/`letter_freqs` there divide by word/count length to produce normalized frequencies, unlike the helper's raw counts.
 
 - `word-list-5.txt` is a generated artifact (see the Makefile) but is checked in, since the browser app fetches it at runtime.
+
+- **`nyt_history.py` (personal history).** NYT puzzle `id` is **not** sequential by date (assigned from a non-chronological editorial pool), so it can't be computed — `nyt_history.py` looks up each date's `id` and `solution` from the public `svc/wordle/v2/<date>.json` endpoint (cached in `data/puzzle_index.json`), then fetches the player's saved boards from the authenticated `latests?puzzle_ids=...` endpoint using the `NYT-S` cookie. The cookie is obtained by logging in via `webctl` and extracted from the saved webctl session profile; `data/` and `.nyt_cookie` are gitignored secrets/artifacts.
 
 ## Conventions
 
