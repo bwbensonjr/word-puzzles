@@ -46,8 +46,8 @@ uv run python nyt_history.py download --start 2025-08-01 --end 2026-06-06
 
 Output:
 - `data/wordle_personal_history.csv` — one row per played day: `date`,
-  `puzzle_id`, `solution`, `guesses` (pipe-joined), `num_guesses`, `won`,
-  `hard_mode`, `status`.
+  `puzzle_id`, `solution`, `first` (starting word), `guesses` (pipe-joined),
+  `num_guesses`, `won`, `hard_mode`, `status`.
 - `data/wordle_stats.json` — your lifetime Wordle stats (streaks, total games,
   guess distribution).
 - Raw JSON batches under `data/` for re-parsing.

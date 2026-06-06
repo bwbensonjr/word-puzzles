@@ -1,4 +1,7 @@
-# Downloaded data and the NYT session cookie (secret) — never commit these.
-data/
+# Ignore downloaded data and the NYT session cookie (secret), but keep the
+# tidy per-day CSV checked in. Raw states_*.json embed the NYT user_id, so
+# they stay ignored.
+data/*
+!data/wordle_personal_history.csv
 .nyt_cookie
 __pycache__/

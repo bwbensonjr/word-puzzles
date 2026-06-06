@@ -221,6 +221,7 @@ def parse_states(states, index):
                 "date": date,
                 "puzzle_id": state.get("puzzle_id"),
                 "solution": date_to_solution.get(date),
+                "first": board[0] if board else None,
                 "guesses": "|".join(board),
                 "num_guesses": len(board),
                 "won": status == "WIN",
@@ -234,8 +235,8 @@ def parse_states(states, index):
 
 def write_csv(rows, path=OUTPUT_CSV):
     DATA_DIR.mkdir(exist_ok=True)
-    fields = ["date", "puzzle_id", "solution", "guesses", "num_guesses", "won",
-              "hard_mode", "status"]
+    fields = ["date", "puzzle_id", "solution", "first", "guesses", "num_guesses",
+              "won", "hard_mode", "status"]
     with open(path, "w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=fields)
         writer.writeheader()
