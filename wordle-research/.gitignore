@@ -1,7 +1,8 @@
 # Ignore downloaded data and the NYT session cookie (secret), but keep the
-# tidy per-day CSV checked in. Raw states_*.json embed the NYT user_id, so
-# they stay ignored.
+# tidy per-day CSV and the public puzzle index (date -> id, solution)
+# checked in. Raw states_*.json embed the NYT user_id, so they stay ignored.
 data/*
 !data/wordle_personal_history.csv
+!data/puzzle_index.json
 .nyt_cookie
 __pycache__/

@@ -15,7 +15,7 @@ Tools for working on word puzzles (currently Wordle). Two independent subproject
 
 ```bash
 # Regenerate the 5-letter dictionary from the system dictionary
-cd wordle-helper && make            # writes word-list-5.txt from /usr/share/dict/words
+cd wordle-helper && make            # word-list-5.txt = lowercase /usr/share/dict/words + extra-words.txt + past answers from wordle-research/data/puzzle_index.json
 
 # Run the CLI: <pattern> [out_letters] [in_letters]
 # pattern is a 5-char regex body, e.g. ".a..e" or "[^xq]...."
@@ -47,7 +47,7 @@ uv run python nyt_history.py download         # -> data/wordle_personal_history.
 
 - `word-list-5.txt` is a generated artifact (see the Makefile) but is checked in, since the browser app fetches it at runtime.
 
-- **`nyt_history.py` (personal history).** NYT puzzle `id` is **not** sequential by date (assigned from a non-chronological editorial pool), so it can't be computed — `nyt_history.py` looks up each date's `id` and `solution` from the public `svc/wordle/v2/<date>.json` endpoint (cached in `data/puzzle_index.json`), then fetches the player's saved boards from the authenticated `latests?puzzle_ids=...` endpoint using the `NYT-S` cookie. The cookie is obtained by logging in via `webctl` and extracted from the saved webctl session profile; `data/` and `.nyt_cookie` are gitignored secrets/artifacts.
+- **`nyt_history.py` (personal history).** NYT puzzle `id` is **not** sequential by date (assigned from a non-chronological editorial pool), so it can't be computed — `nyt_history.py` looks up each date's `id` and `solution` from the public `svc/wordle/v2/<date>.json` endpoint (cached in `data/puzzle_index.json`), then fetches the player's saved boards from the authenticated `latests?puzzle_ids=...` endpoint using the `NYT-S` cookie. The cookie is obtained by logging in via `webctl` and extracted from the saved webctl session profile; `.nyt_cookie` and most of `data/` are gitignored secrets/artifacts; `data/wordle_personal_history.csv` and `data/puzzle_index.json` are tracked.
 
 ## Conventions
 
